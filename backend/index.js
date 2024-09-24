@@ -23,6 +23,9 @@ app.use(json());
 app.use(
   cors({
     origin: "*",
+    optionsSuccessStatus: 200,
+    methods: "GET, POST, PUT, DELETE",
+    allowedHeaders: "Content-Type, Authorization",
   })
 );
 
