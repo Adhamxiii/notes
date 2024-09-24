@@ -22,10 +22,9 @@ import authenticateToken from "./utilities.js";
 app.use(json());
 app.use(
   cors({
-    origin: "*",
-    optionsSuccessStatus: 200,
-    methods: "GET, POST, PUT, DELETE",
-    allowedHeaders: "Content-Type, Authorization",
+    origin: "https://notes-frontend-neon.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 );
 
