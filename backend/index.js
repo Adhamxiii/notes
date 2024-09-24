@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+dotenv.config();
 import mongoose from "mongoose";
 
 const MONGO_URI =
@@ -13,7 +14,6 @@ import cors from "cors";
 import express, { json } from "express";
 const app = express();
 const port = 8000;
-dotenv.config();
 
 import pkg from "jsonwebtoken";
 const { sign } = pkg;
@@ -25,6 +25,7 @@ app.use(
     origin: "https://notes-frontend-neon.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
+    optionsSuccessStatus: 200,
   })
 );
 
@@ -79,28 +80,20 @@ app.post("/create-account", async (req, res) => {
 // Login
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ message: "Email is required" });
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
   }
 
-  if (!password) {
-    return res.status(400).json({ message: "Password is required" });
-  }
-
-  const userInfo = await findOne({ email: email });
-
+  const userInfo = await User.findOne({ email });
   if (!userInfo) {
-    return res.json({ message: "User not found" });
+    return res.status(400).json({ message: "User not found" });
   }
 
-  if (userInfo.email == email && userInfo.password == password) {
+  if (userInfo.password === password) {
     const accessToken = sign(
       { user: userInfo },
       process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: "36000m",
-      }
+      { expiresIn: "36000m" }
     );
     return res.json({
       error: false,
